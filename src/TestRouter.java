@@ -1,5 +1,9 @@
+
+
 public class TestRouter {
     public static void main(String[] args) {
+    	
+    	System.out.println("prova");
         // creazione router
         Router r1 = new Router("r1");
         Router r2 = new Router("r2");
