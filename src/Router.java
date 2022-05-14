@@ -1,11 +1,19 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Queue;
 
 /**
  * Classe che descrive un router
  */
 public class Router implements Runnable{
+    /**
+     * Contatore dentificatore univoco router
+     */
+    private static int contatoreIdentificatore = 0;
+
+    /**
+     * Identificatore univoco router
+     */
+    private int id;
     /**
      * Nome identificativo router
      */
@@ -22,15 +30,23 @@ public class Router implements Runnable{
      * Pacchetti in ricezione
      */
     private Queue<Pacchetto> codaPacchettiEntrata;
+    /**
+     * Paccehtti in invio
+     */
     private Queue<Pacchetto> codaPacchettiUscita;
     private Thread thread;
 
+
+    public int getId() {
+        return id;
+    }
 
     public Router(String label) {
         this.thread = new Thread(this);
         this.interfacce = new ArrayList<>();
         this.label = label;
         this.tabellaRouting = new TabellaRouting();
+        this.id = contatoreIdentificatore++;
     }
 
     public void setLabel(String label) {

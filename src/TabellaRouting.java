@@ -26,7 +26,7 @@ public class TabellaRouting {
 
     public boolean esisteRottaPerRouter(Router router){
         for(Rotta rotta : table){
-            if(rotta.getRouter().getLabel().equalsIgnoreCase(router.getLabel())){
+            if(rotta.getRouter().getId() == router.getId()){
                 return true;
             }
         }
