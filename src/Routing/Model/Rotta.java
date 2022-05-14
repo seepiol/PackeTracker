@@ -1,4 +1,4 @@
-package Routing;
+package Routing.Model;
 
 /**
  * Classe che descrive la rotta per un router

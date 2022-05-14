@@ -1,7 +1,10 @@
 package Routing;
 
-import Routing.Pacchetti.Pacchetto;
-import Routing.Pacchetti.TipoPacchetto;
+import Routing.Model.Collegamento;
+import Routing.Model.Interfaccia;
+import Routing.Model.Router;
+import Routing.Model.Pacchetti.Pacchetto;
+import Routing.Model.Pacchetti.TipoPacchetto;
 
 public class TestRouter {
     public static void main(String[] args) throws InterruptedException {

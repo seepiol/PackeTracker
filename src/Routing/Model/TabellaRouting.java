@@ -1,4 +1,4 @@
-package Routing;
+package Routing.Model;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;

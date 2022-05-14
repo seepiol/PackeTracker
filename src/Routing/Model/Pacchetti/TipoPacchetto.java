@@ -1,4 +1,4 @@
-package Routing.Pacchetti;
+package Routing.Model.Pacchetti;
 
 /**
  * Tipo del pacchetto

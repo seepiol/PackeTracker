@@ -1,6 +1,6 @@
-package Routing;
+package Routing.Model;
 
-import Routing.Pacchetti.Pacchetto;
+import Routing.Model.Pacchetti.Pacchetto;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
