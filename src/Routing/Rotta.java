@@ -1,6 +1,20 @@
+package Routing;
+
+/**
+ * Classe che descrive la rotta per un router
+ */
 public class Rotta {
+    /**
+     * Router di destinazione della rotta
+     */
     private Router router;
+    /**
+     * Interfaccia sulla quale inviare il pacchetto
+     */
     private Interfaccia interfaccia;
+    /**
+     * Costo totale del tragitto router corrente - router destinazione
+     */
     private int costo;
 
     public Rotta(Router router, Interfaccia interfaccia, int costo) {

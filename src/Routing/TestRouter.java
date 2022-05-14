@@ -1,3 +1,8 @@
+package Routing;
+
+import Routing.Pacchetti.Pacchetto;
+import Routing.Pacchetti.TipoPacchetto;
+
 public class TestRouter {
     public static void main(String[] args) throws InterruptedException {
         // creazione router
@@ -36,14 +41,14 @@ public class TestRouter {
         eth1r4.setCollegamento(link3);
 
         r1.start();
-        Thread.sleep(20000);
+        Thread.sleep(5000);
         r2.start();
-        Thread.sleep(20000);
+        Thread.sleep(5000);
         r3.start();
-        Thread.sleep(20000);
+        Thread.sleep(5000);
         r4.start();
-        Thread.sleep(20000);
-        r1.inviaPacchetto(new Pacchetto("ciao", r1, r4, 10));
+        Thread.sleep(5000);
+        r1.inviaPacchetto(new Pacchetto("ciao", r1, r3, TipoPacchetto.TESTO,10));
 
     }
 }

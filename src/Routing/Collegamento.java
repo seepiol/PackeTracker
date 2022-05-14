@@ -1,3 +1,5 @@
+package Routing;
+
 /**
  * Classe che descrive il collegamento fra due interfacce
  */
@@ -10,7 +12,9 @@ public class Collegamento {
      * seconda interfaccia
      */
     private Interfaccia nodo2;
-
+    /**
+     * costo del collegamento
+     */
     private int costo;
 
     public Collegamento(Interfaccia nodo1, Interfaccia nodo2, int costo) {
@@ -22,6 +26,11 @@ public class Collegamento {
     public Collegamento() {
     }
 
+    /**
+     * imposta i nodi collegati
+     * @param int1 primo nodo
+     * @param int2 secondo nodo
+     */
     public void setNodi(Interfaccia int1, Interfaccia int2){
         nodo1 = int1;
         nodo2 = int2;
@@ -43,6 +52,11 @@ public class Collegamento {
         this.nodo2 = nodo2;
     }
 
+    /**
+     * Recupera altro nodo del collegamento
+     * @param nodo nodo conosciuto del collegamento
+     * @return secondo nodo del collegamento
+     */
     public Interfaccia getAltroNodo(Interfaccia nodo){
         if(nodo.equals(nodo1)){
             return nodo2;
@@ -53,6 +67,11 @@ public class Collegamento {
         return null;
     }
 
+    /**
+     * Verifica se un collegamento contiene un determinato nodo
+     * @param a nodo da verificare
+     * @return <b>true</b> se contenuto, <b>false</b> se non contenuto
+     */
     public boolean contieneNodo(String a){
         if(nodo1 != null && nodo1.getAddress().equals(a)){
             return true;

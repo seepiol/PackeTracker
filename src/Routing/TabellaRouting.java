@@ -1,8 +1,15 @@
+package Routing;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
+/**
+ * Classe che descrive la tabella di routing di un router
+ */
 public class TabellaRouting {
+    /**
+     * Lista delle rotte
+     */
     private ArrayList<Rotta> table;
     public Semaphore semaforo;
 

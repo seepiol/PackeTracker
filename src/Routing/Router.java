@@ -1,7 +1,10 @@
+package Routing;
+
+import Routing.Pacchetti.Pacchetto;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Classe che descrive un router
@@ -46,10 +49,10 @@ public class Router implements Runnable{
     private Thread thread;
 
 
-    public int getId() {
-        return id;
-    }
-
+    /**
+     * Crea l'istanza di un router
+     * @param label etichetta identificativa del router
+     */
     public Router(String label) {
         this.thread = new Thread(this);
         this.interfacce = new ArrayList<>();
@@ -69,10 +72,19 @@ public class Router implements Runnable{
         return label;
     }
 
+    /**
+     * Aggiunge un pacchetto alla coda dei pacchetti di enrata del router
+     * @param pacchetto pacchetto da aggiungere alla coda
+     */
     public void riceviPacchetto(Pacchetto pacchetto){
         codaPacchettiEntrata.add(pacchetto);
     }
 
+    /**
+     * Aggiunge un'interfaccia al router
+     * @param i interfaccia da aggiungere
+     * @return risultato operazione
+     */
     public boolean aggiungiInterfaccia(Interfaccia i){
         if(i != null){
             interfacce.add(i);
@@ -83,12 +95,19 @@ public class Router implements Runnable{
         return false;
     }
 
+    /**
+     * Esegue il processo di convergenza secondo l'algoritmo di Bellman-Ford
+     * Richiede ad ogni router presente nella propria tabella di routing (inizialmente riempita con le connessioni
+     * dirette) le rotte contenute nella loro tabella di routing.
+     * Ogni rotta viene salvata nella tabella di routing del router corrente
+     */
     public void convergenza(){
         TabellaRouting tabellaRoutingVicino;
         Interfaccia interfacciaLocale;
         int costo;
         Router router;
         Router routerConnesso;
+        System.out.printf("[%s]: Convergenza\n", this);
         for(int i=0; i<tabellaRouting.getTabella().size(); i++){
             router = tabellaRouting.getTabella().get(i).getRouter();
             tabellaRoutingVicino = router.getTabellaRouting();
@@ -102,7 +121,8 @@ public class Router implements Runnable{
                             !tabellaRouting.esisteRottaPerRouter(routerConnesso) ||
                             (tabellaRouting.esisteRottaPerRouter(routerConnesso) && tabellaRouting.getCostoPerRouter(routerConnesso) > costo)
                     ) {
-                        System.out.printf("%s conosce rotta per %s passando da %s (interfaccia %s, costo %d)\n", this, routerConnesso, router, interfacciaLocale, costo);
+                        // TODO: salvare anche rotte con costo maggiore di quella già presente, e decidere in fase di indirizzamento la più economica
+                        System.out.printf("[%s]: Scoperta rotta per %s passando da %s (interfaccia %s, costo %d)\n", this, routerConnesso, router, interfacciaLocale, costo);
                         tabellaRouting.aggiungiRotta(new Rotta(routerConnesso, interfacciaLocale, costo));
                     }
                 }
@@ -110,10 +130,13 @@ public class Router implements Runnable{
         }
     }
 
-
+    /**
+     * esegue il broadcasting di un pacchetto (invia il pacchetto a tutti i router conosciuti)
+     * @param p pacchetto da inviare
+     */
     public void broadcastPacchetto(Pacchetto p){
         for(Rotta rotta : tabellaRouting.getTabella()) {
-            inviaPacchetto(new Pacchetto(getTabellaRouting(), this, rotta.getRouter()));
+            inviaPacchetto(new Pacchetto(p.getContenuto(), this, rotta.getRouter(), p.getTipo()));
         }
     }
 
@@ -126,41 +149,72 @@ public class Router implements Runnable{
         System.out.println(tabellaRouting.toString());
     }
 
+    /**
+     * Scopre i router connessi direttamente alle interfacce del router corrente
+     */
     public void scopriConnessioniDirette(){
+        System.out.printf("[%s]: Ricerca Connessioni Dirette\n", this);
         for(Interfaccia interfaccia : interfacce){
             Interfaccia interfacciaAltroRouter = interfaccia.getCollegamento().getAltroNodo(interfaccia);
             if(interfaccia.getCollegamento().getAltroNodo(interfaccia)!=null){
-                System.out.printf("%s conosce rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto());
+                System.out.printf("[%s]: Scoperta rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto());
                 tabellaRouting.aggiungiRotta(new Rotta(interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
             }
         }
     }
 
+    /**
+     * Gestisce un pacchetto inviato al router corrente
+     * @param pacchetto pacchetto da gestire
+     */
+    public void gestionePacchetto(Pacchetto pacchetto){
+        switch(pacchetto.getTipo()){
+            case TESTO:
+                System.out.printf("[%s]: Pacchetto ricevuto di tipo testuale.", this);
+                break;
+        }
+    }
+
+    /**
+     * Esegue l'inoltro del pacchetto passando per l'interfaccia appropriata
+     * Se il pacchetto ha come destinazione il router corrente, viene chiamata <code>gestionePacchetto</code>
+     * @param pacchetto pacchetto da inoltrare
+     */
     public void inviaPacchetto(Pacchetto pacchetto){
         Interfaccia nextHop;
         pacchetto.setPassaggio(this);
 
         if(pacchetto.getDestinazione() == this){
-            System.out.println(this+" Pacchetto ARRIVATO!");
+            System.out.printf("[%s]: Pacchetto Arrivato a destinazione\n", this);
             System.out.println(pacchetto.getRotta().toString());
             pacchetti.add(pacchetto);
+            gestionePacchetto(pacchetto);
         }else {
             nextHop = tabellaRouting.getInterfacciaPerRouter(pacchetto.getDestinazione());
 
             if (nextHop != null) {
-                System.out.println(this+" Pacchetto INOLTRATO!");
+                System.out.printf("[%s]: Pacchetto Inoltrato su %s\n", this, nextHop);
                 nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().riceviPacchetto(pacchetto);
             }else{
-                System.out.println(this+" Pacchetto DROPPATO! (nessuna rotta per il router di destinazione "+pacchetto.getDestinazione()+")");
+                System.out.printf("[%s]: Pacchetto Droppato: Nessuna rotta per %s\n", this, pacchetto.getDestinazione());
             }
         }
     }
 
+    /**
+     * Avvia il thread del router
+     */
     public void start() {
+        System.out.printf("[%s]: Inizializzato\n", this);
         gestoreCoda.start();
         thread.start();
     }
 
+    /**
+     * Risolve il nome del router
+     * @param routerName nome router
+     * @return istanza del router corrispondente
+     */
     public Router nameToRouter(String routerName){
         for(Rotta rotta : tabellaRouting.getTabella()){
             if(rotta.getRouter().getLabel().equalsIgnoreCase(routerName)){
@@ -170,6 +224,11 @@ public class Router implements Runnable{
         return null;
     }
 
+    /**
+     * Risoluzione inversa del nome del router
+     * @param router istanza del router
+     * @return nome del router
+     */
     public String routerToName(Router router){
         return router.getLabel();
     }
@@ -181,16 +240,17 @@ public class Router implements Runnable{
     public void run(){
         scopriConnessioniDirette();
         while (true){
-            convergenza();
-            if(label.equals("r1")){
-                System.out.println(tabellaRouting);
-            }
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            convergenza();
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
