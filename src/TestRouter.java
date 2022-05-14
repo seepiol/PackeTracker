@@ -1,5 +1,5 @@
 public class TestRouter {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // creazione router
         Router r1 = new Router("r1");
         Router r2 = new Router("r2");
@@ -35,13 +35,13 @@ public class TestRouter {
         eth2r2.setCollegamento(link2);
         eth1r4.setCollegamento(link3);
 
-        Runnable tr1 = new ThreadRouter(r1);
-        Thread threadR1 = new Thread(tr1, "Router 1");
-        threadR1.start();
-
-        Runnable tr2 = new ThreadRouter(r2);
-        Thread threadR2 = new Thread(tr2, "Router 2");
-        threadR2.start();
+        r1.start();
+        Thread.sleep(20000);
+        r2.start();
+        Thread.sleep(20000);
+        r3.start();
+        Thread.sleep(20000);
+        r4.start();
 
     }
 }

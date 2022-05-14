@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 
 public class TabellaRouting {
     private ArrayList<Rotta> table;
+    public Semaphore semaforo;
 
     public TabellaRouting() {
         table = new ArrayList<>();
+        semaforo = new Semaphore(1);
     }
 
     public void aggiungiRotta(Rotta rotta){
@@ -13,7 +16,21 @@ public class TabellaRouting {
     }
 
     public ArrayList<Rotta> getTabella(){
-        return table;
+        ArrayList<Rotta> tabella = table;
+        return tabella;
+    }
+
+    public int getNumeroRotte(){
+        return table.size();
+    }
+
+    public boolean esisteRottaPerRouter(Router router){
+        for(Rotta rotta : table){
+            if(rotta.getRouter().getLabel().equalsIgnoreCase(router.getLabel())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public Interfaccia getInterfacciaPerRouter(Router router){
@@ -36,21 +53,25 @@ public class TabellaRouting {
 
     public ArrayList<Router> getRouterDaInterfaccia(Interfaccia interfaccia){
         ArrayList<Router> routers = new ArrayList<>();
-
         for(Rotta rotta : table){
             if(rotta.getInterfaccia() == interfaccia)
                 routers.add(rotta.getRouter());
         }
-
         return routers;
     }
 
     @Override
     public String toString() {
         String tab = "";
+        try{
+            semaforo.acquire();
+        } catch (InterruptedException e){
+            throw new RuntimeException(e);
+        }
         for(Rotta rotta : table){
             tab+=String.format("%s -> %s [%d] \n", rotta.getInterfaccia().getLabel(), rotta.getRouter(), rotta.getCosto());
         }
+        semaforo.release();
         return tab;
     }
 

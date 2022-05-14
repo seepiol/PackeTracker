@@ -5,7 +5,7 @@ import java.util.Queue;
 /**
  * Classe che descrive un router
  */
-public class Router {
+public class Router implements Runnable{
     /**
      * Nome identificativo router
      */
@@ -21,10 +21,13 @@ public class Router {
     /**
      * Pacchetti in ricezione
      */
-    private Queue<Pacchetto> codaPacchettiRicezione;
+    private Queue<Pacchetto> codaPacchettiEntrata;
+    private Queue<Pacchetto> codaPacchettiUscita;
+    private Thread thread;
 
 
     public Router(String label) {
+        this.thread = new Thread(this);
         this.interfacce = new ArrayList<>();
         this.label = label;
         this.tabellaRouting = new TabellaRouting();
@@ -54,21 +57,21 @@ public class Router {
         int costo;
         Router router;
         Router routerConnesso;
-
         for(int i=0; i<tabellaRouting.getTabella().size(); i++){
             router = tabellaRouting.getTabella().get(i).getRouter();
             tabellaRoutingVicino = router.getTabellaRouting();
-            for(int k=0; k<tabellaRoutingVicino.getTabella().size(); k++){
+            for(int k=0; k<tabellaRoutingVicino.getNumeroRotte(); k++){
                 routerConnesso = tabellaRoutingVicino.getTabella().get(k).getRouter();
                 if(routerConnesso != this){
                     interfacciaLocale = tabellaRouting.getInterfacciaPerRouter(router);
                     costo = tabellaRoutingVicino.getCostoPerRouter(routerConnesso) + tabellaRouting.getCostoPerRouter(router);
 
                     if(
-                            !tabellaRouting.getTabella().contains(routerConnesso) ||
-                            (tabellaRouting.getTabella().contains(routerConnesso) && tabellaRouting.getCostoPerRouter(routerConnesso) > costo)
+                            !tabellaRouting.esisteRottaPerRouter(routerConnesso) ||
+                            (tabellaRouting.esisteRottaPerRouter(routerConnesso) && tabellaRouting.getCostoPerRouter(routerConnesso) > costo)
                     ) {
-                        tabellaRouting.aggiungiRotta(new Rotta(router, interfacciaLocale, costo));
+                        System.out.printf("%s conosce rotta per %s passando da %s (interfaccia %s, costo %d)\n", this, routerConnesso, router, interfacciaLocale, costo);
+                        tabellaRouting.aggiungiRotta(new Rotta(routerConnesso, interfacciaLocale, costo));
                     }
                 }
             }
@@ -93,8 +96,10 @@ public class Router {
 
     public void scopriConnessioniDirette(){
         for(Interfaccia interfaccia : interfacce){
+            Interfaccia interfacciaAltroRouter = interfaccia.getCollegamento().getAltroNodo(interfaccia);
             if(interfaccia.getCollegamento().getAltroNodo(interfaccia)!=null){
-                tabellaRouting.aggiungiRotta(new Rotta(interfaccia.getCollegamento().getAltroNodo(interfaccia).getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
+                System.out.printf("%s conosce rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto());
+                tabellaRouting.aggiungiRotta(new Rotta(interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
             }
         }
     }
@@ -106,7 +111,7 @@ public class Router {
         if(pacchetto.getDestinazione() == this){
             System.out.println(this+" Pacchetto ARRIVATO!");
             System.out.println(pacchetto.getRotta().toString());
-            codaPacchettiRicezione.add(pacchetto);
+            codaPacchettiEntrata.add(pacchetto);
         }else {
             nextHop = tabellaRouting.getInterfacciaPerRouter(pacchetto.getDestinazione());
 
@@ -117,6 +122,10 @@ public class Router {
                 System.out.println(this+" Pacchetto DROPPATO! (nessuna rotta per il router di destinazione "+pacchetto.getDestinazione()+")");
             }
         }
+    }
+
+    public void start() {
+        thread.start();
     }
 
     public Router nameToRouter(String routerName){
@@ -134,6 +143,21 @@ public class Router {
 
     public ArrayList<Interfaccia> getInterfacce() {
         return interfacce;
+    }
+
+    public void run(){
+        scopriConnessioniDirette();
+        while (true){
+            convergenza();
+            if(label.equals("r1")){
+                System.out.println(tabellaRouting);
+            }
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
