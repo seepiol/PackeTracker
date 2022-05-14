@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Classe che descrive un router
@@ -31,9 +33,16 @@ public class Router implements Runnable{
      */
     private Queue<Pacchetto> codaPacchettiEntrata;
     /**
-     * Paccehtti in invio
+     * Gestore coda pacchetti in entrata
      */
-    private Queue<Pacchetto> codaPacchettiUscita;
+    private GestoreCodaPacchettiEntrata gestoreCoda;
+    /**
+     * Cronologia pacchetti ricevuti
+     */
+    private ArrayList<Pacchetto> pacchetti;
+    /**
+     * Thread router
+     */
     private Thread thread;
 
 
@@ -47,6 +56,9 @@ public class Router implements Runnable{
         this.label = label;
         this.tabellaRouting = new TabellaRouting();
         this.id = contatoreIdentificatore++;
+        this.codaPacchettiEntrata = new LinkedList<>();
+        this.gestoreCoda = new GestoreCodaPacchettiEntrata(this, codaPacchettiEntrata);
+        this.pacchetti = new ArrayList<>();
     }
 
     public void setLabel(String label) {
@@ -55,6 +67,10 @@ public class Router implements Runnable{
 
     public String getLabel() {
         return label;
+    }
+
+    public void riceviPacchetto(Pacchetto pacchetto){
+        codaPacchettiEntrata.add(pacchetto);
     }
 
     public boolean aggiungiInterfaccia(Interfaccia i){
@@ -127,13 +143,13 @@ public class Router implements Runnable{
         if(pacchetto.getDestinazione() == this){
             System.out.println(this+" Pacchetto ARRIVATO!");
             System.out.println(pacchetto.getRotta().toString());
-            codaPacchettiEntrata.add(pacchetto);
+            pacchetti.add(pacchetto);
         }else {
             nextHop = tabellaRouting.getInterfacciaPerRouter(pacchetto.getDestinazione());
 
             if (nextHop != null) {
                 System.out.println(this+" Pacchetto INOLTRATO!");
-                nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().inviaPacchetto(pacchetto);
+                nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().riceviPacchetto(pacchetto);
             }else{
                 System.out.println(this+" Pacchetto DROPPATO! (nessuna rotta per il router di destinazione "+pacchetto.getDestinazione()+")");
             }
@@ -141,6 +157,7 @@ public class Router implements Runnable{
     }
 
     public void start() {
+        gestoreCoda.start();
         thread.start();
     }
 

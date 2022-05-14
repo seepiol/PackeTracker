@@ -42,6 +42,8 @@ public class TestRouter {
         r3.start();
         Thread.sleep(20000);
         r4.start();
+        Thread.sleep(20000);
+        r1.inviaPacchetto(new Pacchetto("ciao", r1, r4, 10));
 
     }
 }
