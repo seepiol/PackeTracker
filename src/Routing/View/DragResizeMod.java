@@ -165,6 +165,7 @@ public class DragResizeMod {
     protected void mouseReleased(MouseEvent event) {
         node.setCursor(Cursor.DEFAULT);
         state = S.DEFAULT;
+        mainController.eliminaCollegamenti();
         mainController.disegnaCollegamenti();
     }
 
@@ -256,6 +257,8 @@ public class DragResizeMod {
     }
 
     protected void mousePressed(MouseEvent event) {
+        mainController.eliminaCollegamenti();
+        mainController.eliminaCollegamenti();
         mainController.eliminaCollegamenti();
         if (isInResizeZone(event)) {
             setNewInitialEventCoordinates(event);

@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ChoiceBox;
@@ -120,15 +121,22 @@ public class MainController {
         }
     }
 
+    /**
+     * Elimina le linee di collegamento
+     * Funzione chiamata ovunque più volte perchè se chiamata solo una volta non funziona
+     * non so il motivo ma funziona
+     */
     public void eliminaCollegamenti(){
         for(int i=0; i<group.getChildren().size(); i++){
-            if(group.getChildren().get(i) instanceof Line){
-                group.getChildren().remove(i);
+            Node node = group.getChildren().get(i);
+            if(node instanceof Line){
+                group.getChildren().remove(node);
             }
         }
     }
 
     public void disegnaCollegamenti(){
+        eliminaCollegamenti();
         eliminaCollegamenti();
         for(Collegamento collegamento : mainModel.getListaCollegamenti()){
             Canvas canvasRouter1 = collegamento.getNodo1().getRouter().getCanvas();
