@@ -25,7 +25,7 @@ public class MainApp extends Application{
     public void start(Stage primaryStage) throws Exception {
         
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("NetSim (PreAlpha)");
+        this.primaryStage.setTitle("FRANCISCO PackeTracker™");
 
         inizializza();
         
