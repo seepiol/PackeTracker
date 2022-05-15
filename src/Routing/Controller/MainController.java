@@ -5,10 +5,12 @@ import Routing.Model.Collegamento;
 import Routing.Model.MainModel;
 import Routing.Model.Router;
 import Routing.View.DragResizeMod;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -16,12 +18,17 @@ import javafx.scene.text.Font;
 public class MainController {
     private MainApp mainApp;
     private MainModel mainModel;
+    private String log;
 
     @FXML
     private Group group;
 
+    @FXML
+    private TextArea logTextArea;
+
     public MainController(){
         DragResizeMod.setMainController(this);
+        log = "";
     }
 
     private void postMainAppInitialize(){
@@ -48,7 +55,7 @@ public class MainController {
         }
     }
 
-    private void disegnaRouter(){
+    public void disegnaRouter(){
         int spawnPosX = 0;
         int spawnPosY = 0;
         for(Router router : mainModel.getListaRouter()){
@@ -70,6 +77,16 @@ public class MainController {
             spawnPosY+=100;
             router.setCanvas(canvas);
         }
+    }
+
+    public synchronized void log(String messaggio){
+        System.out.print(messaggio);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                logTextArea.appendText(messaggio);
+            }
+        });
     }
 
     public void setMainApp(MainApp mainApp) {

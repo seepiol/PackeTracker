@@ -40,8 +40,6 @@ public class MainApp extends Application{
 
             mainModel = new MainModel();
 
-            test();
-
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("/Routing/View/Main.fxml"));
             AnchorPane rootLayout = (AnchorPane) loader.load();
@@ -56,6 +54,8 @@ public class MainApp extends Application{
             mainController = loader.getController(); // loader ha già istanziato il controller indicato in mainGui
             mainController.setMainApp(this);
 
+            test();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,10 +64,10 @@ public class MainApp extends Application{
 
     private void test(){
         // creazione router
-        Router r1 = new Router("r1");
-        Router r2 = new Router("r2");
-        Router r3 = new Router("r3");
-        Router r4 = new Router("r4");
+        Router r1 = new Router("r1", mainController);
+        Router r2 = new Router("r2", mainController);
+        Router r3 = new Router("r3", mainController);
+        Router r4 = new Router("r4", mainController);
 
         // creazione interfacce
         Interfaccia eth1r1 = new Interfaccia("eth1", "1");
@@ -108,6 +108,9 @@ public class MainApp extends Application{
         mainModel.addRouter(r2);
         mainModel.addRouter(r3);
         mainModel.addRouter(r4);
+
+        mainController.disegnaRouter();
+        mainController.disegnaCollegamenti();
 
         r1.start();
         r2.start();

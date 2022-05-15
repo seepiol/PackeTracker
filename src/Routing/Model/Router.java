@@ -1,5 +1,6 @@
 package Routing.Model;
 
+import Routing.Controller.MainController;
 import Routing.Model.Pacchetti.Pacchetto;
 import javafx.scene.canvas.Canvas;
 
@@ -49,6 +50,10 @@ public class Router implements Runnable{
      */
     private Canvas canvas;
     /**
+     * Istanza di maincontroller necessaria per inviare i log
+     */
+    private MainController mainController;
+    /**
      * Thread router
      */
     private Thread thread;
@@ -58,7 +63,7 @@ public class Router implements Runnable{
      * Crea l'istanza di un router
      * @param label etichetta identificativa del router
      */
-    public Router(String label) {
+    public Router(String label, MainController mainController) {
         this.thread = new Thread(this);
         this.interfacce = new ArrayList<>();
         this.label = label;
@@ -67,6 +72,7 @@ public class Router implements Runnable{
         this.codaPacchettiEntrata = new LinkedList<>();
         this.gestoreCoda = new GestoreCodaPacchettiEntrata(this, codaPacchettiEntrata);
         this.pacchetti = new ArrayList<>();
+        this.mainController = mainController;
     }
 
     public Canvas getCanvas() {
@@ -120,7 +126,7 @@ public class Router implements Runnable{
         int costo;
         Router router;
         Router routerConnesso;
-        System.out.printf("[%s]: Convergenza\n", this);
+        mainController.log(String.format("[%s]: Convergenza\n", this));
         for(int i=0; i<tabellaRouting.getTabella().size(); i++){
             router = tabellaRouting.getTabella().get(i).getRouter();
             tabellaRoutingVicino = router.getTabellaRouting();
@@ -135,7 +141,7 @@ public class Router implements Runnable{
                             (tabellaRouting.esisteRottaPerRouter(routerConnesso) && tabellaRouting.getCostoPerRouter(routerConnesso) > costo)
                     ) {
                         // TODO: salvare anche rotte con costo maggiore di quella già presente, e decidere in fase di indirizzamento la più economica
-                        System.out.printf("[%s]: Scoperta rotta per %s passando da %s (interfaccia %s, costo %d)\n", this, routerConnesso, router, interfacciaLocale, costo);
+                        mainController.log(String.format("[%s]: Scoperta rotta per %s passando da %s (interfaccia %s, costo %d)\n", this, routerConnesso, router, interfacciaLocale, costo));
                         tabellaRouting.aggiungiRotta(new Rotta(routerConnesso, interfacciaLocale, costo));
                     }
                 }
@@ -166,12 +172,12 @@ public class Router implements Runnable{
      * Scopre i router connessi direttamente alle interfacce del router corrente
      */
     public void scopriConnessioniDirette(){
-        System.out.printf("[%s]: Ricerca Connessioni Dirette\n", this);
+        mainController.log(String.format("[%s]: Ricerca Connessioni Dirette\n", this));
         for(Interfaccia interfaccia : interfacce){
             if(interfaccia.getCollegamento()!=null) {
                 Interfaccia interfacciaAltroRouter = interfaccia.getCollegamento().getAltroNodo(interfaccia);
                 if (interfaccia.getCollegamento().getAltroNodo(interfaccia) != null) {
-                    System.out.printf("[%s]: Scoperta rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto());
+                    mainController.log(String.format("[%s]: Scoperta rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
                     tabellaRouting.aggiungiRotta(new Rotta(interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
                 }
             }
@@ -185,7 +191,7 @@ public class Router implements Runnable{
     public void gestionePacchetto(Pacchetto pacchetto){
         switch(pacchetto.getTipo()){
             case TESTO:
-                System.out.printf("[%s]: Pacchetto ricevuto di tipo testuale.", this);
+                mainController.log(String.format("[%s]: Pacchetto ricevuto di tipo testuale.", this));
                 break;
         }
     }
@@ -200,7 +206,7 @@ public class Router implements Runnable{
         pacchetto.setPassaggio(this);
 
         if(pacchetto.getDestinazione() == this){
-            System.out.printf("[%s]: Pacchetto Arrivato a destinazione\n", this);
+            mainController.log(String.format("[%s]: Pacchetto Arrivato a destinazione\n", this));
             System.out.println(pacchetto.getRotta().toString());
             pacchetti.add(pacchetto);
             gestionePacchetto(pacchetto);
@@ -208,10 +214,10 @@ public class Router implements Runnable{
             nextHop = tabellaRouting.getInterfacciaPerRouter(pacchetto.getDestinazione());
 
             if (nextHop != null) {
-                System.out.printf("[%s]: Pacchetto Inoltrato su %s\n", this, nextHop);
+                mainController.log(String.format("[%s]: Pacchetto Inoltrato su %s\n", this, nextHop));
                 nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().riceviPacchetto(pacchetto);
             }else{
-                System.out.printf("[%s]: Pacchetto Droppato: Nessuna rotta per %s\n", this, pacchetto.getDestinazione());
+                mainController.log(String.format("[%s]: Pacchetto Droppato: Nessuna rotta per %s\n", this, pacchetto.getDestinazione()));
             }
         }
     }
@@ -220,7 +226,7 @@ public class Router implements Runnable{
      * Avvia il thread del router
      */
     public void start() {
-        System.out.printf("[%s]: Inizializzato\n", this);
+        mainController.log(String.format("[%s]: Inizializzato\n", this));
         gestoreCoda.start();
         thread.start();
     }
