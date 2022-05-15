@@ -1,6 +1,7 @@
 package Routing.Model;
 
 import Routing.Model.Pacchetti.Pacchetto;
+import javafx.scene.canvas.Canvas;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -44,6 +45,10 @@ public class Router implements Runnable{
      */
     private ArrayList<Pacchetto> pacchetti;
     /**
+     * Canvas per disegnare il router nella GUI
+     */
+    private Canvas canvas;
+    /**
      * Thread router
      */
     private Thread thread;
@@ -62,6 +67,14 @@ public class Router implements Runnable{
         this.codaPacchettiEntrata = new LinkedList<>();
         this.gestoreCoda = new GestoreCodaPacchettiEntrata(this, codaPacchettiEntrata);
         this.pacchetti = new ArrayList<>();
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
+    }
+
+    public void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
     }
 
     public void setLabel(String label) {

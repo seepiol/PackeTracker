@@ -90,6 +90,10 @@ public class MainApp extends Application{
         Collegamento link2 = new Collegamento(eth1r3, eth2r2, 1);
         Collegamento link3 = new Collegamento(eth1r4, eth2r1, 1);
 
+        mainModel.addCollegamento(link1);
+        mainModel.addCollegamento(link2);
+        mainModel.addCollegamento(link3);
+
         // impostazione link alle interfacce
         eth1r1.setCollegamento(link1);
         eth2r1.setCollegamento(link3);

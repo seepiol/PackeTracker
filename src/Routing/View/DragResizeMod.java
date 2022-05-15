@@ -4,6 +4,7 @@ package Routing.View;
 // https://github.com/varren/JavaFX-Resizable-Draggable-Node
 // Modificata per lasciare solo il drag e rimuovere resize
 
+import Routing.Controller.MainController;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -35,6 +36,17 @@ import javafx.scene.shape.Rectangle;
  */
 
 public class DragResizeMod {
+
+    private static MainController mainController;
+
+    public static MainController getMainController() {
+        return mainController;
+    }
+
+    public static void setMainController(MainController mainController) {
+        DragResizeMod.mainController = mainController;
+    }
+
     public interface OnDragResizeEventListener {
         void onDrag(Node node, double x, double y, double h, double w);
 
@@ -153,6 +165,7 @@ public class DragResizeMod {
     protected void mouseReleased(MouseEvent event) {
         node.setCursor(Cursor.DEFAULT);
         state = S.DEFAULT;
+        mainController.disegnaCollegamenti();
     }
 
     protected void mouseOver(MouseEvent event) {
@@ -203,6 +216,7 @@ public class DragResizeMod {
                 double newH = nodeH;
                 double newW = nodeW;
 
+
                 // Right Resize
                 if (state == S.E_RESIZE || state == S.NE_RESIZE || state == S.SE_RESIZE) {
                     newW = mouseX - nodeX;
@@ -242,7 +256,7 @@ public class DragResizeMod {
     }
 
     protected void mousePressed(MouseEvent event) {
-
+        mainController.eliminaCollegamenti();
         if (isInResizeZone(event)) {
             setNewInitialEventCoordinates(event);
             state = currentMouseState(event);
