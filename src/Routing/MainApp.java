@@ -98,10 +98,10 @@ public class MainApp extends Application{
 
         // impostazione link alle interfacce
         eth1r1.setCollegamento(link1);
-        eth2r1.setCollegamento(link3);
         eth1r2.setCollegamento(link1);
         eth1r3.setCollegamento(link2);
-        eth2r2.setCollegamento(link2);
+        eth2r1.setCollegamento(link2);
+        eth3r1.setCollegamento(link3);
         eth1r4.setCollegamento(link3);
 
         mainModel.addRouter(r1);

@@ -60,7 +60,6 @@ public class MainController {
     private void selezionatoRouterPerTabella(){
         Router routerSelezionato = tabellaRouterChoiceBox.getValue();
         if(routerSelezionato!=null){
-            System.out.println("fdhkfjh");
             tabellaRoutingObservableList = FXCollections.observableList(routerSelezionato.getTabellaRouting().getTabella());
             tabellaRoutingTableView.setItems(tabellaRoutingObservableList);
             tabellaRoutingTableView.refresh();
