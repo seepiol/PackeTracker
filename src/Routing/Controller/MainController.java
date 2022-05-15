@@ -3,13 +3,20 @@ package Routing.Controller;
 import Routing.MainApp;
 import Routing.Model.Collegamento;
 import Routing.Model.MainModel;
+import Routing.Model.Rotta;
 import Routing.Model.Router;
 import Routing.View.DragResizeMod;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -18,22 +25,52 @@ import javafx.scene.text.Font;
 public class MainController {
     private MainApp mainApp;
     private MainModel mainModel;
-    private String log;
 
     @FXML
     private Group group;
-
     @FXML
     private TextArea logTextArea;
+    @FXML
+    private Router routerSelezionato;
+    @FXML
+    private ChoiceBox<Router> tabellaRouterChoiceBox;
+    @FXML
+    private ObservableList<Rotta> tabellaRoutingObservableList;
+    @FXML
+    private TableView<Rotta> tabellaRoutingTableView;
+    @FXML
+    private TableColumn<Rotta, String> destinazioneTableColumn;
+    @FXML
+    private TableColumn<Rotta, String> interfacciaTableColumn;
+    @FXML
+    private TableColumn<Rotta, String> costoTableColumn;
 
     public MainController(){
         DragResizeMod.setMainController(this);
-        log = "";
+    }
+
+    @FXML
+    private void initialize(){
+        destinazioneTableColumn.setCellValueFactory(a -> new SimpleStringProperty(a.getValue().getRouter().toString()));
+        interfacciaTableColumn.setCellValueFactory((a -> new SimpleStringProperty(a.getValue().getInterfaccia().getLabel())));
+        costoTableColumn.setCellValueFactory((a -> new SimpleStringProperty(""+a.getValue().getCosto())));
+    }
+
+    @FXML
+    private void selezionatoRouterPerTabella(){
+        Router routerSelezionato = tabellaRouterChoiceBox.getValue();
+        if(routerSelezionato!=null){
+            System.out.println("fdhkfjh");
+            tabellaRoutingObservableList = FXCollections.observableList(routerSelezionato.getTabellaRouting().getTabella());
+            tabellaRoutingTableView.setItems(tabellaRoutingObservableList);
+            tabellaRoutingTableView.refresh();
+        }
     }
 
     private void postMainAppInitialize(){
         disegnaRouter();
         disegnaCollegamenti();
+        tabellaRoutingTableView.setItems(tabellaRoutingObservableList);
     }
 
     public void eliminaCollegamenti(){
@@ -56,6 +93,7 @@ public class MainController {
     }
 
     public void disegnaRouter(){
+        // Disegna i router su canvas
         int spawnPosX = 0;
         int spawnPosY = 0;
         for(Router router : mainModel.getListaRouter()){
@@ -77,6 +115,8 @@ public class MainController {
             spawnPosY+=100;
             router.setCanvas(canvas);
         }
+        // Aggiunge router a choicebox router
+        tabellaRouterChoiceBox.getItems().addAll(mainModel.getListaRouter());
     }
 
     public synchronized void log(String messaggio){

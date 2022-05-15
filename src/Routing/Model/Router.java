@@ -176,7 +176,7 @@ public class Router implements Runnable{
         for(Interfaccia interfaccia : interfacce){
             if(interfaccia.getCollegamento()!=null) {
                 Interfaccia interfacciaAltroRouter = interfaccia.getCollegamento().getAltroNodo(interfaccia);
-                if (interfaccia.getCollegamento().getAltroNodo(interfaccia) != null) {
+                if (interfaccia.getCollegamento().getAltroNodo(interfaccia) != null && !tabellaRouting.esisteRottaPerRouter(interfaccia.getCollegamento().getAltroNodo(interfaccia).getRouter())) {
                     mainController.log(String.format("[%s]: Scoperta rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
                     tabellaRouting.aggiungiRotta(new Rotta(interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
                 }
@@ -259,13 +259,13 @@ public class Router implements Runnable{
     }
 
     public void run(){
-        scopriConnessioniDirette();
         while (true){
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            scopriConnessioniDirette();
             convergenza();
         }
     }
