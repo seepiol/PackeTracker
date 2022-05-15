@@ -1,5 +1,8 @@
 package Routing.Model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
@@ -25,6 +28,14 @@ public class TabellaRouting {
     public ArrayList<Rotta> getTabella(){
         ArrayList<Rotta> tabella = table;
         return tabella;
+    }
+
+    public void rimuoviRotta(Rotta rotta){
+        table.remove(rotta);
+    }
+
+    public ObservableList<Rotta> getTabellaObservableList(){
+        return FXCollections.observableList(table);
     }
 
     public int getNumeroRotte(){

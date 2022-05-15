@@ -19,7 +19,9 @@ public class Collegamento {
 
     public Collegamento(Interfaccia nodo1, Interfaccia nodo2, int costo) {
         this.nodo1 = nodo1;
+        nodo1.setCollegamento(this);
         this.nodo2 = nodo2;
+        nodo2.setCollegamento(this);
         this.costo = costo;
     }
 

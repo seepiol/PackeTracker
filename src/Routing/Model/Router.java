@@ -141,6 +141,7 @@ public class Router implements Runnable{
                             (tabellaRouting.esisteRottaPerRouter(routerConnesso) && tabellaRouting.getCostoPerRouter(routerConnesso) > costo)
                     ) {
                         // TODO: salvare anche rotte con costo maggiore di quella già presente, e decidere in fase di indirizzamento la più economica
+                        tabellaRouting.rimuoviRotta(tabellaRouting.trovaRottaDaRouter(routerConnesso));
                         mainController.log(String.format("[%s]: Scoperta rotta per %s passando da %s (interfaccia %s, costo %d)\n", this, routerConnesso, router, interfacciaLocale, costo));
                         tabellaRouting.aggiungiRotta(new Rotta(routerConnesso, interfacciaLocale, costo));
                     }
@@ -191,7 +192,7 @@ public class Router implements Runnable{
     public void gestionePacchetto(Pacchetto pacchetto){
         switch(pacchetto.getTipo()){
             case TESTO:
-                mainController.log(String.format("[%s]: Pacchetto ricevuto di tipo testuale.", this));
+                mainController.log(String.format("[%s]: Pacchetto ricevuto di tipo testuale: %s\n", this, pacchetto.getContenuto()));
                 break;
         }
     }
@@ -212,10 +213,13 @@ public class Router implements Runnable{
             gestionePacchetto(pacchetto);
         }else {
             nextHop = tabellaRouting.getInterfacciaPerRouter(pacchetto.getDestinazione());
-
             if (nextHop != null) {
-                mainController.log(String.format("[%s]: Pacchetto Inoltrato su %s\n", this, nextHop));
-                nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().riceviPacchetto(pacchetto);
+                if(pacchetto.inoltra()) {
+                    mainController.log(String.format("[%s]: Pacchetto Inoltrato su %s\n", this, nextHop));
+                    nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().riceviPacchetto(pacchetto);
+                }else{
+                    mainController.log(String.format("[%s]: Pacchetto Droppato: Limite hop raggiunto\n", this));
+                }
             }else{
                 mainController.log(String.format("[%s]: Pacchetto Droppato: Nessuna rotta per %s\n", this, pacchetto.getDestinazione()));
             }
@@ -267,6 +271,7 @@ public class Router implements Runnable{
             }
             scopriConnessioniDirette();
             convergenza();
+            //mainController.selezionatoRouterPerTabella();
         }
     }
 

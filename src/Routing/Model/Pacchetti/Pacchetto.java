@@ -1,6 +1,8 @@
 package Routing.Model.Pacchetti;
 
 import Routing.Model.Router;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ public class Pacchetto {
     /**
      * Contenuto del pacchetto
      */
-    private Object contenuto;
+    private String contenuto;
     /**
      * Tipo del pacchetto
      */
@@ -42,7 +44,7 @@ public class Pacchetto {
      * @param tipo tipo pacchetto
      * @param maxHop numero massimo di hop
      */
-    public Pacchetto(Object contenuto, Router sorgente, Router destinazione, TipoPacchetto tipo, int maxHop) {
+    public Pacchetto(String contenuto, Router sorgente, Router destinazione, TipoPacchetto tipo, int maxHop) {
         this.contenuto = contenuto;
         this.sorgente = sorgente;
         this.destinazione = destinazione;
@@ -58,7 +60,7 @@ public class Pacchetto {
      * @param destinazione router destinatario
      * @param tipo tipo pacchetto
      */
-    public Pacchetto(Object contenuto, Router sorgente, Router destinazione, TipoPacchetto tipo){
+    public Pacchetto(String contenuto, Router sorgente, Router destinazione, TipoPacchetto tipo){
         this.contenuto = contenuto;
         this.sorgente = sorgente;
         this.destinazione = destinazione;
@@ -83,8 +85,26 @@ public class Pacchetto {
         return tipo;
     }
 
-    public Object getContenuto() {
+    public String getContenuto() {
         return contenuto;
+    }
+
+    public int getMaxHop() {
+        return maxHop;
+    }
+
+
+    public ObservableList<Router> getRottaObservableList(){
+        return FXCollections.observableList(rotta);
+    }
+
+    public boolean inoltra(){
+        if(maxHop-1 >= 0){
+            maxHop--;
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public ArrayList<Router> getRotta() {

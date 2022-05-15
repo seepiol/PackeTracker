@@ -68,54 +68,58 @@ public class MainApp extends Application{
         Router r2 = new Router("r2", mainController);
         Router r3 = new Router("r3", mainController);
         Router r4 = new Router("r4", mainController);
+        Router r5 = new Router("r5", mainController);
 
         // creazione interfacce
         Interfaccia eth1r1 = new Interfaccia("eth1", "1");
         Interfaccia eth2r1 = new Interfaccia("eth2", "6");
         Interfaccia eth3r1 = new Interfaccia("eth3", "7");
+
         Interfaccia eth1r2 = new Interfaccia("eth1", "2");
         Interfaccia eth2r2 = new Interfaccia("eth2", "3");
+
         Interfaccia eth1r3 = new Interfaccia("eth1", "4");
+
         Interfaccia eth1r4 = new Interfaccia("eth1", "5");
+        Interfaccia eth2r4 = new Interfaccia("eth2", "9");
+
+        Interfaccia eth1r5 = new Interfaccia("eth1", "8");
+
 
         // aggiunta interfacce a router
         r1.aggiungiInterfaccia(eth1r1);
         r1.aggiungiInterfaccia(eth2r1);
         r1.aggiungiInterfaccia(eth3r1);
+
         r2.aggiungiInterfaccia(eth1r2);
         r2.aggiungiInterfaccia(eth2r2);
+
         r3.aggiungiInterfaccia(eth1r3);
+
         r4.aggiungiInterfaccia(eth1r4);
+        r4.aggiungiInterfaccia(eth2r4);
+
+        r5.aggiungiInterfaccia(eth1r5);
 
         // creazione link
         Collegamento link1 = new Collegamento(eth1r1, eth1r2, 2);
         Collegamento link2 = new Collegamento(eth1r3, eth2r1, 1);
         Collegamento link3 = new Collegamento(eth1r4, eth3r1, 1);
+        Collegamento link4 = new Collegamento(eth2r4, eth1r5, 1);
 
         mainModel.addCollegamento(link1);
         mainModel.addCollegamento(link2);
         mainModel.addCollegamento(link3);
-
-        // impostazione link alle interfacce
-        eth1r1.setCollegamento(link1);
-        eth1r2.setCollegamento(link1);
-        eth1r3.setCollegamento(link2);
-        eth2r1.setCollegamento(link2);
-        eth3r1.setCollegamento(link3);
-        eth1r4.setCollegamento(link3);
+        mainModel.addCollegamento(link4);
 
         mainModel.addRouter(r1);
         mainModel.addRouter(r2);
         mainModel.addRouter(r3);
         mainModel.addRouter(r4);
+        mainModel.addRouter(r5);
 
         mainController.disegnaRouter();
         mainController.disegnaCollegamenti();
-
-        r1.start();
-        r2.start();
-        r3.start();
-        r4.start();
     }
 
     /*

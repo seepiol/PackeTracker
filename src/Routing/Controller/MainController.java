@@ -3,13 +3,13 @@ package Routing.Controller;
 import Routing.MainApp;
 import Routing.Model.Collegamento;
 import Routing.Model.MainModel;
+import Routing.Model.Pacchetti.Pacchetto;
+import Routing.Model.Pacchetti.TipoPacchetto;
 import Routing.Model.Rotta;
 import Routing.Model.Router;
 import Routing.View.DragResizeMod;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
@@ -22,6 +22,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainController {
     private MainApp mainApp;
     private MainModel mainModel;
@@ -31,11 +35,11 @@ public class MainController {
     @FXML
     private TextArea logTextArea;
     @FXML
-    private Router routerSelezionato;
+    private ChoiceBox<Router> routerSorgenteChoiceBox;
+    @FXML
+    private ChoiceBox<Router> routerDestinazioneChoiceBox;
     @FXML
     private ChoiceBox<Router> tabellaRouterChoiceBox;
-    @FXML
-    private ObservableList<Rotta> tabellaRoutingObservableList;
     @FXML
     private TableView<Rotta> tabellaRoutingTableView;
     @FXML
@@ -44,6 +48,14 @@ public class MainController {
     private TableColumn<Rotta, String> interfacciaTableColumn;
     @FXML
     private TableColumn<Rotta, String> costoTableColumn;
+    @FXML
+    private TableView<Router> listHopPacchetto;
+    @FXML
+    private TableColumn<Router, String> hopTableColumn;
+    @FXML
+    private ChoiceBox<TipoPacchetto> tipoPacchettoChoiceBox;
+    @FXML
+    private TextArea contenutoPacchettoTextArea;
 
     public MainController(){
         DragResizeMod.setMainController(this);
@@ -51,25 +63,61 @@ public class MainController {
 
     @FXML
     private void initialize(){
+        tipoPacchettoChoiceBox.getItems().setAll(TipoPacchetto.values());
+
         destinazioneTableColumn.setCellValueFactory(a -> new SimpleStringProperty(a.getValue().getRouter().toString()));
-        interfacciaTableColumn.setCellValueFactory((a -> new SimpleStringProperty(a.getValue().getInterfaccia().getLabel())));
+        interfacciaTableColumn.setCellValueFactory((a -> new SimpleStringProperty(a.getValue().getInterfaccia().getLabel() + " ("+a.getValue().getInterfaccia().getCollegamento().getAltroNodo(a.getValue().getInterfaccia()).getRouter().getLabel()+")")));
         costoTableColumn.setCellValueFactory((a -> new SimpleStringProperty(""+a.getValue().getCosto())));
+
+        hopTableColumn.setCellValueFactory(a -> new SimpleStringProperty(a.getValue().toString()));
+
+        Timer timer = new Timer();
+
+        // Task aggiornamento tableview tabella routing ogni secondo
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                Platform.runLater(() -> {
+                    tabellaRoutingTableView.refresh();
+                });
+            }
+        }, new Date(), 1000);
+
+        // Task aggiornamento tableview rotta pacchetto ogni secondo
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                Platform.runLater(() -> {
+                    listHopPacchetto.refresh();
+                });
+            }
+        }, new Date(), 1000);
     }
 
     @FXML
-    private void selezionatoRouterPerTabella(){
+    public void selezionatoRouterPerTabella(){
         Router routerSelezionato = tabellaRouterChoiceBox.getValue();
         if(routerSelezionato!=null){
-            tabellaRoutingObservableList = FXCollections.observableList(routerSelezionato.getTabellaRouting().getTabella());
-            tabellaRoutingTableView.setItems(tabellaRoutingObservableList);
-            tabellaRoutingTableView.refresh();
+            try {
+                tabellaRoutingTableView.setItems(routerSelezionato.getTabellaRouting().getTabellaObservableList());
+                tabellaRoutingTableView.refresh();
+            }catch(Exception e){
+                System.out.println("Pass");
+            }
         }
+    }
+
+    public void tableViewRefresh(){
+        tabellaRoutingTableView.refresh();
     }
 
     private void postMainAppInitialize(){
         disegnaRouter();
         disegnaCollegamenti();
-        tabellaRoutingTableView.setItems(tabellaRoutingObservableList);
+    }
+
+    public void avviaSimulazione(){
+        for(Router router : mainModel.getListaRouter()){
+            router.start();
+        }
     }
 
     public void eliminaCollegamenti(){
@@ -99,12 +147,12 @@ public class MainController {
             Canvas canvas = new Canvas(100, 100);
             GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
             graphicsContext.setFill(Color.BLACK);
-            graphicsContext.setLineWidth(5);
+            graphicsContext.setLineWidth(3);
             graphicsContext.setStroke(Color.BLACK);
             Font font = Font.font(15);
             graphicsContext.setFont(font);
             graphicsContext.fillText(router.toString(), 12, 90);
-            graphicsContext.strokeOval(30, 30, 40, 40);
+            graphicsContext.fillOval(30, 30, 40, 40);
             //graphicsContext.strokeRect(0, 0, 100, 100);
             DragResizeMod.makeResizable(canvas);
             group.getChildren().add(canvas);
@@ -114,8 +162,21 @@ public class MainController {
             spawnPosY+=100;
             router.setCanvas(canvas);
         }
-        // Aggiunge router a choicebox router
+        // Aggiunge router a choicebox
         tabellaRouterChoiceBox.getItems().addAll(mainModel.getListaRouter());
+        routerDestinazioneChoiceBox.getItems().addAll(mainModel.getListaRouter());
+        routerSorgenteChoiceBox.getItems().addAll(mainModel.getListaRouter());
+    }
+
+    @FXML
+    public void inviaPacchetto(){
+        Router sorgente = routerSorgenteChoiceBox.getValue();
+        Router destinazione = routerDestinazioneChoiceBox.getValue();
+        TipoPacchetto tipoPacchetto = tipoPacchettoChoiceBox.getValue();
+        String contenuto = contenutoPacchettoTextArea.getText();
+        Pacchetto pacchetto = new Pacchetto(contenuto, sorgente, destinazione, tipoPacchetto);
+        sorgente.inviaPacchetto(pacchetto);
+        listHopPacchetto.setItems(pacchetto.getRottaObservableList());
     }
 
     public synchronized void log(String messaggio){
