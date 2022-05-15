@@ -168,10 +168,12 @@ public class Router implements Runnable{
     public void scopriConnessioniDirette(){
         System.out.printf("[%s]: Ricerca Connessioni Dirette\n", this);
         for(Interfaccia interfaccia : interfacce){
-            Interfaccia interfacciaAltroRouter = interfaccia.getCollegamento().getAltroNodo(interfaccia);
-            if(interfaccia.getCollegamento().getAltroNodo(interfaccia)!=null){
-                System.out.printf("[%s]: Scoperta rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto());
-                tabellaRouting.aggiungiRotta(new Rotta(interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
+            if(interfaccia.getCollegamento()!=null) {
+                Interfaccia interfacciaAltroRouter = interfaccia.getCollegamento().getAltroNodo(interfaccia);
+                if (interfaccia.getCollegamento().getAltroNodo(interfaccia) != null) {
+                    System.out.printf("[%s]: Scoperta rotta per %s collegato direttamente sull'interfaccia %s, costo %d\n", this, interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto());
+                    tabellaRouting.aggiungiRotta(new Rotta(interfacciaAltroRouter.getRouter(), interfaccia, interfaccia.getCollegamento().getCosto()));
+                }
             }
         }
     }

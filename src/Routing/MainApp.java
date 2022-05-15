@@ -72,6 +72,7 @@ public class MainApp extends Application{
         // creazione interfacce
         Interfaccia eth1r1 = new Interfaccia("eth1", "1");
         Interfaccia eth2r1 = new Interfaccia("eth2", "6");
+        Interfaccia eth3r1 = new Interfaccia("eth3", "7");
         Interfaccia eth1r2 = new Interfaccia("eth1", "2");
         Interfaccia eth2r2 = new Interfaccia("eth2", "3");
         Interfaccia eth1r3 = new Interfaccia("eth1", "4");
@@ -80,6 +81,7 @@ public class MainApp extends Application{
         // aggiunta interfacce a router
         r1.aggiungiInterfaccia(eth1r1);
         r1.aggiungiInterfaccia(eth2r1);
+        r1.aggiungiInterfaccia(eth3r1);
         r2.aggiungiInterfaccia(eth1r2);
         r2.aggiungiInterfaccia(eth2r2);
         r3.aggiungiInterfaccia(eth1r3);
@@ -87,8 +89,8 @@ public class MainApp extends Application{
 
         // creazione link
         Collegamento link1 = new Collegamento(eth1r1, eth1r2, 2);
-        Collegamento link2 = new Collegamento(eth1r3, eth2r2, 1);
-        Collegamento link3 = new Collegamento(eth1r4, eth2r1, 1);
+        Collegamento link2 = new Collegamento(eth1r3, eth2r1, 1);
+        Collegamento link3 = new Collegamento(eth1r4, eth3r1, 1);
 
         mainModel.addCollegamento(link1);
         mainModel.addCollegamento(link2);

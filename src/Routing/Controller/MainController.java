@@ -37,8 +37,7 @@ public class MainController {
         }
     }
 
-    private void disegnaCollegamenti(){
-        System.out.println("COLL");
+    public void disegnaCollegamenti(){
         eliminaCollegamenti();
         for(Collegamento collegamento : mainModel.getListaCollegamenti()){
             Canvas canvasRouter1 = collegamento.getNodo1().getRouter().getCanvas();
