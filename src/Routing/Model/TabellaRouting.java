@@ -94,4 +94,7 @@ public class TabellaRouting {
     }
 
 
+    public void clear() {
+        table.clear();
+    }
 }

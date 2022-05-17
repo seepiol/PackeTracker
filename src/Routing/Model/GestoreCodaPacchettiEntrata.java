@@ -31,6 +31,10 @@ public class GestoreCodaPacchettiEntrata implements Runnable{
         thread.start();
     }
 
+    public void stop(){
+        thread.stop();
+    }
+
     /**
      * Se la coda dei pacchetti in arrivo non è vuota, rimuove il primo pacchetto e lo passa alla funzione
      * <code>inviaPacchetto</code>

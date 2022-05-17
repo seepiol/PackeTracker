@@ -68,6 +68,8 @@ public class MainController {
     private TextArea contenutoPacchettoTextArea;
     @FXML
     private Button collegaRouterButton;
+    @FXML
+    private Button interrompiSimulazioneButton;
 
     public MainController(){
         DragResizeMod.setMainController(this);
@@ -75,6 +77,9 @@ public class MainController {
 
     @FXML
     private void initialize(){
+
+        interrompiSimulazioneButton.setDisable(true);
+
         tipoPacchettoChoiceBox.getItems().setAll(TipoPacchetto.values());
 
         destinazioneTableColumn.setCellValueFactory(a -> new SimpleStringProperty(a.getValue().getRouter().toString()));
@@ -128,12 +133,10 @@ public class MainController {
 
     public void avviaSimulazione(){
         mainApp.setSimulazioneAttiva(true);
+        interrompiSimulazioneButton.setDisable(false);
         for(Router router : mainModel.getListaRouter()){
             router.start();
         }
-    }
-
-    public void aggiungiInterfaccia(){
     }
 
     public void impostaRouter(){
@@ -209,7 +212,16 @@ public class MainController {
         }
     }
 
+    public void reset(){
+        for(Router router : mainModel.getListaRouter()){
+            router.reset();
+        }
+        mainApp.setSimulazioneAttiva(false);
+        interrompiSimulazioneButton.setDisable(true);
+    }
+
     public void aggiungiRouter(){
+        //TODO: se simulazione in corso, avvia subito thread
         Router router = new Router( this);
         mainModel.addRouter(router);
         disegnaRouter(router);

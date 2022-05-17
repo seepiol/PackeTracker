@@ -287,6 +287,14 @@ public class Router implements Runnable{
         }
     }
 
+    public void reset(){
+        tabellaRouting.clear();
+        codaPacchettiEntrata.clear();
+        pacchetti.clear();
+        gestoreCoda.stop();
+        thread.stop();
+    }
+
     public int getId() {
         return id;
     }

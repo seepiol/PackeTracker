@@ -10,7 +10,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -38,6 +37,7 @@
                                     <Button mnemonicParsing="false" onAction="#aggiungiRouter" text="Aggiungi Router" />
                                     <Button fx:id="collegaRouterButton" mnemonicParsing="false" onAction="#collegaRouter" text="Collega Router" />
                                     <Button mnemonicParsing="false" onAction="#avviaSimulazione" text="Avvia Simulazione" />
+                                    <Button fx:id="interrompiSimulazioneButton" mnemonicParsing="false" onAction="#reset" text="Reset Simulazione" />
                                  </children>
                               </HBox>
                            </children>
@@ -46,7 +46,7 @@
                   </AnchorPane>
             </content>
           </Tab>
-            <Tab text="Impostazioni Router">
+            <Tab text="Informazioni Router">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -59,22 +59,17 @@
                                 </columnConstraints>
                                 <rowConstraints>
                                     <RowConstraints maxHeight="160.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="160.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
                                   <RowConstraints maxHeight="271.0" minHeight="10.0" prefHeight="271.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="160.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Etichetta Router" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                                    <TextField fx:id="etichettaImpostazioniRouterTextField" prefHeight="26.0" prefWidth="337.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label text="Lista Interfacce" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                                    <Label text="Lista Interfacce" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                        <GridPane.margin>
                                           <Insets top="5.0" />
                                        </GridPane.margin>
                                     </Label>
                                     <Label text="Router" GridPane.halignment="CENTER" />
                                     <ChoiceBox fx:id="impostazioniRouterChoiceBox" onAction="#impostaRouter" prefHeight="26.0" prefWidth="414.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                                    <Button fx:id="modificaEtichettaRouter" mnemonicParsing="false" prefHeight="26.0" prefWidth="101.0" text="Salva" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                                    <TextArea fx:id="interfacceRouterTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextArea fx:id="interfacceRouterTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </children>
