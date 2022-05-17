@@ -19,13 +19,24 @@ public class Collegamento {
 
     public Collegamento(Interfaccia nodo1, Interfaccia nodo2, int costo) {
         this.nodo1 = nodo1;
-        nodo1.setCollegamento(this);
         this.nodo2 = nodo2;
-        nodo2.setCollegamento(this);
+        //nodo1.setCollegamento(this);
+        //nodo2.setCollegamento(this);
         this.costo = costo;
     }
 
+    public Collegamento(Interfaccia nodo1) {
+        this.nodo1 = nodo1;
+        nodo1.setCollegamento(this);
+        costo = 1;
+    }
+
     public Collegamento() {
+        costo = 1;
+    }
+
+    public boolean collegamentoValido(){
+        return nodo1!=null && nodo2!=null;
     }
 
     /**
@@ -62,11 +73,22 @@ public class Collegamento {
     public Interfaccia getAltroNodo(Interfaccia nodo){
         if(nodo.equals(nodo1)){
             return nodo2;
+        }else if(nodo.equals(nodo2)){
+            return nodo1;
+        }else {
+            return null;
+        }
+    }
+
+    public void setAltroNodo(Interfaccia nodo, Interfaccia nuovoNodo){
+        if(nodo.equals(nodo1)){
+            nodo2 = nuovoNodo;
+            nodo2.setCollegamento(this);
         }
         if(nodo.equals(nodo2)){
-            return nodo1;
+            nodo1 = nuovoNodo;
+            nodo1.setCollegamento(this);
         }
-        return null;
     }
 
     /**

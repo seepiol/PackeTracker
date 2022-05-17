@@ -63,7 +63,7 @@ public class MainApp extends Application{
             mainController = loader.getController(); // loader ha già istanziato il controller indicato in mainGui
             mainController.setMainApp(this);
 
-            test();
+            //test();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,6 +72,7 @@ public class MainApp extends Application{
 
 
     private void test(){
+        /*
         // creazione router
         Router r1 = new Router("r1", mainController);
         Router r2 = new Router("r2", mainController);
@@ -129,6 +130,8 @@ public class MainApp extends Application{
 
         mainController.disegnaRouter();
         mainController.disegnaCollegamenti();
+
+         */
     }
 
     /*

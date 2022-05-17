@@ -6,6 +6,7 @@ import java.util.Objects;
  * Classe che descrive un'interfaccia del router
  */
 public class Interfaccia {
+    private static int numeroIndirizzoInterfaccia = 0;
     /**
      * nome dell'interfaccia
      */
@@ -26,16 +27,17 @@ public class Interfaccia {
     public Interfaccia(String label, Collegamento collegamento, String address) {
         this.label = label;
         this.collegamento = collegamento;
-        this.address = address;
+        this.address = ""+(numeroIndirizzoInterfaccia++);
     }
 
     public Interfaccia(String label, String address) {
         this.label = label;
-        this.address = address;
+        this.address = ""+(numeroIndirizzoInterfaccia++);
     }
 
     public Interfaccia(String label) {
         this.label = label;
+        this.address = ""+(numeroIndirizzoInterfaccia++);
     }
 
     public String getLabel() {
@@ -74,8 +76,7 @@ public class Interfaccia {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Interfaccia that = (Interfaccia) o;
-        return Objects.equals(address, that.address);
+        return this.address.equalsIgnoreCase(((Interfaccia) o).address);
     }
 
     @Override

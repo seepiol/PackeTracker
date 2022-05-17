@@ -1,21 +1,23 @@
 package Routing.Controller;
 
 import Routing.MainApp;
-import Routing.Model.Collegamento;
-import Routing.Model.MainModel;
+import Routing.Model.*;
 import Routing.Model.Pacchetti.Pacchetto;
 import Routing.Model.Pacchetti.TipoPacchetto;
-import Routing.Model.Rotta;
-import Routing.Model.Router;
 import Routing.View.DragResizeMod;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -27,6 +29,10 @@ import java.util.TimerTask;
 public class MainController {
     private MainApp mainApp;
     private MainModel mainModel;
+
+    private boolean staEseguendoCollegamento = false;
+    private Router primoRouter;
+    private Router secondoRouter;
 
     @FXML
     private Group group;
@@ -53,7 +59,15 @@ public class MainController {
     @FXML
     private ChoiceBox<TipoPacchetto> tipoPacchettoChoiceBox;
     @FXML
+    private ChoiceBox<Router> impostazioniRouterChoiceBox;
+    @FXML
+    private TextField etichettaImpostazioniRouterTextField;
+    @FXML
+    private TextArea interfacceRouterTextArea;
+    @FXML
     private TextArea contenutoPacchettoTextArea;
+    @FXML
+    private Button collegaRouterButton;
 
     public MainController(){
         DragResizeMod.setMainController(this);
@@ -119,14 +133,91 @@ public class MainController {
         }
     }
 
+    public void aggiungiInterfaccia(){
+    }
+
+    public void impostaRouter(){
+        Router routerSelezionato = impostazioniRouterChoiceBox.getValue();
+        interfacceRouterTextArea.clear();
+        if(routerSelezionato != null) {
+            etichettaImpostazioniRouterTextField.setText(routerSelezionato.getLabel());
+            for (Interfaccia interfaccia : routerSelezionato.getInterfacce()) {
+                interfacceRouterTextArea.appendText("Interfaccia "+interfaccia+" collegata a "+interfaccia.getCollegamento().getAltroNodo(interfaccia)+"\n");
+            }
+        }
+    }
+
+    public boolean staEseguendoCollegamento() {
+        return staEseguendoCollegamento;
+    }
+
+    public Router getPrimoRouter() {
+        return primoRouter;
+    }
+
+    public void setPrimoRouter(Router primoRouter) {
+        this.primoRouter = primoRouter;
+    }
+
+    public Router getSecondoRouter() {
+        return secondoRouter;
+    }
+
+    public void setSecondoRouter(Router secondoRouter) {
+        this.secondoRouter = secondoRouter;
+    }
+
+    public void terminaCollegamento(){
+        if(primoRouter != secondoRouter) {
+            Interfaccia interfacciaPrimoRouter = primoRouter.aggiungiInterfaccia();
+            Interfaccia interfacciaSecondoRouter = secondoRouter.aggiungiInterfaccia();
+            Collegamento collegamento = new Collegamento(interfacciaPrimoRouter, interfacciaSecondoRouter, 1);
+            interfacciaPrimoRouter.setCollegamento(collegamento);
+            interfacciaSecondoRouter.setCollegamento(collegamento);
+            mainModel.addCollegamento(collegamento);
+        }else{
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Impossibile collegare router a se stesso");
+            alert.showAndWait();
+        }
+        disegnaCollegamenti();
+        staEseguendoCollegamento = false;
+        primoRouter = null;
+        secondoRouter = null;
+        collegaRouterButton.setDisable(false);
+
+    }
+
+    public void collegaRouter(){
+        staEseguendoCollegamento = true;
+        collegaRouterButton.setDisable(true);
+    }
+
+    public Router getRouterFromCanvas(Canvas canvas){
+        for(Router router : mainModel.getListaRouter()){
+            if(router.getCanvas() == canvas){
+                return router;
+            }
+        }
+        return null;
+    }
+
+    public void modificaEtichettaRouter(){
+        Router router = impostazioniRouterChoiceBox.getValue();
+        String label = etichettaImpostazioniRouterTextField.getText();
+        if(router != null && !label.isEmpty()){
+            router.setLabel(label);
+        }
+    }
+
     public void aggiungiRouter(){
-        Router router = new Router("routerAggiunto", this);
+        Router router = new Router( this);
         mainModel.addRouter(router);
         disegnaRouter(router);
         disegnaCollegamenti();
         routerSorgenteChoiceBox.getItems().add(router);
         tabellaRouterChoiceBox.getItems().add(router);
         routerDestinazioneChoiceBox.getItems().add(router);
+        impostazioniRouterChoiceBox.getItems().add(router);
     }
 
     /**
@@ -165,11 +256,13 @@ public class MainController {
         eliminaCollegamenti();
         eliminaCollegamenti();
         for(Collegamento collegamento : mainModel.getListaCollegamenti()){
-            Canvas canvasRouter1 = collegamento.getNodo1().getRouter().getCanvas();
-            Canvas canvasRouter2 = collegamento.getNodo2().getRouter().getCanvas();
-            Line line = new Line(canvasRouter1.getLayoutX()+50, canvasRouter1.getLayoutY()+50, canvasRouter2.getLayoutX()+50, canvasRouter2.getLayoutY()+50);
-            line.setStrokeWidth(4);
-            group.getChildren().add(line);
+            if(collegamento.collegamentoValido()) {
+                Canvas canvasRouter1 = collegamento.getNodo1().getRouter().getCanvas();
+                Canvas canvasRouter2 = collegamento.getNodo2().getRouter().getCanvas();
+                Line line = new Line(canvasRouter1.getLayoutX() + 50, canvasRouter1.getLayoutY() + 50, canvasRouter2.getLayoutX() + 50, canvasRouter2.getLayoutY() + 50);
+                line.setStrokeWidth(4);
+                group.getChildren().add(line);
+            }
         }
     }
 
@@ -177,6 +270,8 @@ public class MainController {
         // Disegna i router su canvas
         int spawnPosX = 0;
         int spawnPosY = 0;
+        int spawnPosXMax = 795;
+        int spawnPosYMax = 469;
         for(Router router : mainModel.getListaRouter()){
             Canvas canvas = new Canvas(100, 100);
             GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
@@ -193,13 +288,17 @@ public class MainController {
             canvas.setLayoutX(spawnPosX);
             canvas.setLayoutY(spawnPosY);
             spawnPosX+=100;
-            spawnPosY+=100;
+            if(spawnPosX>600){
+                spawnPosX = 0;
+                spawnPosY += 100;
+            }
             router.setCanvas(canvas);
         }
         // Aggiunge router a choicebox
         tabellaRouterChoiceBox.getItems().addAll(mainModel.getListaRouter());
         routerDestinazioneChoiceBox.getItems().addAll(mainModel.getListaRouter());
         routerSorgenteChoiceBox.getItems().addAll(mainModel.getListaRouter());
+        impostazioniRouterChoiceBox.getItems().addAll(mainModel.getListaRouter());
     }
 
     @FXML

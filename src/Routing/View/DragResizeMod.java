@@ -257,6 +257,14 @@ public class DragResizeMod {
     }
 
     protected void mousePressed(MouseEvent event) {
+        if(mainController.staEseguendoCollegamento()){
+            if(mainController.getPrimoRouter()==null){
+                mainController.setPrimoRouter(mainController.getRouterFromCanvas((Canvas)this.node));
+            }else{
+                mainController.setSecondoRouter(mainController.getRouterFromCanvas((Canvas)this.node));
+                mainController.terminaCollegamento();
+            }
+        }
         mainController.eliminaCollegamenti();
         mainController.eliminaCollegamenti();
         mainController.eliminaCollegamenti();

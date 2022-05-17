@@ -63,10 +63,10 @@ public class Router implements Runnable{
      * Crea l'istanza di un router
      * @param label etichetta identificativa del router
      */
-    public Router(String label, MainController mainController) {
+    public Router(MainController mainController) {
         this.thread = new Thread(this);
         this.interfacce = new ArrayList<>();
-        this.label = label;
+        this.label = "R"+contatoreIdentificatore;
         this.tabellaRouting = new TabellaRouting();
         this.id = contatoreIdentificatore++;
         this.codaPacchettiEntrata = new LinkedList<>();
@@ -112,6 +112,18 @@ public class Router implements Runnable{
             return true;
         }
         return false;
+    }
+
+    public Interfaccia aggiungiInterfaccia(){
+        int numeroInterfaccia;
+        if(interfacce.size()>0)
+            numeroInterfaccia = Integer.parseInt(interfacce.get(interfacce.size()-1).getLabel().substring(3))+1;
+        else {
+            numeroInterfaccia = 0;
+        }
+        Interfaccia nuovaInterfaccia = new Interfaccia("eth"+numeroInterfaccia);
+        aggiungiInterfaccia(nuovaInterfaccia);
+        return nuovaInterfaccia;
     }
 
     /**
