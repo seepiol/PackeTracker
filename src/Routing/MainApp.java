@@ -20,6 +20,15 @@ public class MainApp extends Application{
     private Stage primaryStage;
     private MainController mainController;
     private MainModel mainModel;
+    private boolean simulazioneAttiva;
+
+    public boolean isSimulazioneAttiva() {
+        return simulazioneAttiva;
+    }
+
+    public void setSimulazioneAttiva(boolean simulazioneAttiva) {
+        this.simulazioneAttiva = simulazioneAttiva;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {

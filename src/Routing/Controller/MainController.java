@@ -15,10 +15,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -116,9 +113,20 @@ public class MainController {
     }
 
     public void avviaSimulazione(){
+        mainApp.setSimulazioneAttiva(true);
         for(Router router : mainModel.getListaRouter()){
             router.start();
         }
+    }
+
+    public void aggiungiRouter(){
+        Router router = new Router("routerAggiunto", this);
+        mainModel.addRouter(router);
+        disegnaRouter(router);
+        disegnaCollegamenti();
+        routerSorgenteChoiceBox.getItems().add(router);
+        tabellaRouterChoiceBox.getItems().add(router);
+        routerDestinazioneChoiceBox.getItems().add(router);
     }
 
     /**
@@ -133,6 +141,24 @@ public class MainController {
                 group.getChildren().remove(node);
             }
         }
+    }
+
+    public void disegnaRouter(Router router){
+        Canvas canvas = new Canvas(100, 100);
+        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+        graphicsContext.setFill(Color.BLACK);
+        graphicsContext.setLineWidth(3);
+        graphicsContext.setStroke(Color.BLACK);
+        Font font = Font.font(15);
+        graphicsContext.setFont(font);
+        graphicsContext.fillText(router.toString(), 12, 90);
+        graphicsContext.fillOval(30, 30, 40, 40);
+        DragResizeMod.makeResizable(canvas);
+        group.getChildren().add(canvas);
+        canvas.setLayoutX(100);
+        canvas.setLayoutY(100);
+        router.setCanvas(canvas);
+
     }
 
     public void disegnaCollegamenti(){
@@ -178,13 +204,23 @@ public class MainController {
 
     @FXML
     public void inviaPacchetto(){
-        Router sorgente = routerSorgenteChoiceBox.getValue();
-        Router destinazione = routerDestinazioneChoiceBox.getValue();
-        TipoPacchetto tipoPacchetto = tipoPacchettoChoiceBox.getValue();
-        String contenuto = contenutoPacchettoTextArea.getText();
-        Pacchetto pacchetto = new Pacchetto(contenuto, sorgente, destinazione, tipoPacchetto);
-        sorgente.inviaPacchetto(pacchetto);
-        listHopPacchetto.setItems(pacchetto.getRottaObservableList());
+        if(mainApp.isSimulazioneAttiva()) {
+            Router sorgente = routerSorgenteChoiceBox.getValue();
+            Router destinazione = routerDestinazioneChoiceBox.getValue();
+            TipoPacchetto tipoPacchetto = tipoPacchettoChoiceBox.getValue();
+            String contenuto = contenutoPacchettoTextArea.getText();
+            Pacchetto pacchetto = new Pacchetto(contenuto, sorgente, destinazione, tipoPacchetto);
+            if(sorgente.getTabellaRouting().esisteRottaPerRouter(destinazione)) {
+                sorgente.inviaPacchetto(pacchetto);
+                listHopPacchetto.setItems(pacchetto.getRottaObservableList());
+            }else{
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Rotta non esistente. Attendi la convergenza.");
+                alert.showAndWait();
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Avvia la simulazione per inviare un pacchetto");
+            alert.showAndWait();
+        }
     }
 
     public synchronized void log(String messaggio){
