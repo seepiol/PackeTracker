@@ -7,17 +7,12 @@ import Routing.Model.Pacchetti.TipoPacchetto;
 import Routing.View.DragResizeMod;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -61,8 +56,6 @@ public class MainController {
     @FXML
     private ChoiceBox<Router> impostazioniRouterChoiceBox;
     @FXML
-    private TextField etichettaImpostazioniRouterTextField;
-    @FXML
     private TextArea interfacceRouterTextArea;
     @FXML
     private TextArea contenutoPacchettoTextArea;
@@ -93,18 +86,14 @@ public class MainController {
         // Task aggiornamento tableview tabella routing ogni secondo
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                Platform.runLater(() -> {
-                    tabellaRoutingTableView.refresh();
-                });
+                Platform.runLater(() -> tabellaRoutingTableView.refresh());
             }
         }, new Date(), 1000);
 
         // Task aggiornamento tableview rotta pacchetto ogni secondo
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                Platform.runLater(() -> {
-                    listHopPacchetto.refresh();
-                });
+                Platform.runLater(() -> listHopPacchetto.refresh());
             }
         }, new Date(), 1000);
     }
@@ -143,7 +132,6 @@ public class MainController {
         Router routerSelezionato = impostazioniRouterChoiceBox.getValue();
         interfacceRouterTextArea.clear();
         if(routerSelezionato != null) {
-            etichettaImpostazioniRouterTextField.setText(routerSelezionato.getLabel());
             for (Interfaccia interfaccia : routerSelezionato.getInterfacce()) {
                 interfacceRouterTextArea.appendText("Interfaccia "+interfaccia+" collegata a "+interfaccia.getCollegamento().getAltroNodo(interfaccia)+"\n");
             }
@@ -160,10 +148,6 @@ public class MainController {
 
     public void setPrimoRouter(Router primoRouter) {
         this.primoRouter = primoRouter;
-    }
-
-    public Router getSecondoRouter() {
-        return secondoRouter;
     }
 
     public void setSecondoRouter(Router secondoRouter) {
@@ -204,14 +188,6 @@ public class MainController {
         return null;
     }
 
-    public void modificaEtichettaRouter(){
-        Router router = impostazioniRouterChoiceBox.getValue();
-        String label = etichettaImpostazioniRouterTextField.getText();
-        if(router != null && !label.isEmpty()){
-            router.setLabel(label);
-        }
-    }
-
     public void reset(){
         for(Router router : mainModel.getListaRouter()){
             router.reset();
@@ -230,6 +206,9 @@ public class MainController {
         tabellaRouterChoiceBox.getItems().add(router);
         routerDestinazioneChoiceBox.getItems().add(router);
         impostazioniRouterChoiceBox.getItems().add(router);
+        if(mainApp.isSimulazioneAttiva()){
+            router.start();
+        }
     }
 
     /**
@@ -282,8 +261,6 @@ public class MainController {
         // Disegna i router su canvas
         int spawnPosX = 0;
         int spawnPosY = 0;
-        int spawnPosXMax = 795;
-        int spawnPosYMax = 469;
         for(Router router : mainModel.getListaRouter()){
             Canvas canvas = new Canvas(100, 100);
             GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
@@ -294,7 +271,6 @@ public class MainController {
             graphicsContext.setFont(font);
             graphicsContext.fillText(router.toString(), 12, 90);
             graphicsContext.fillOval(30, 30, 40, 40);
-            //graphicsContext.strokeRect(0, 0, 100, 100);
             DragResizeMod.makeResizable(canvas);
             group.getChildren().add(canvas);
             canvas.setLayoutX(spawnPosX);
@@ -336,12 +312,7 @@ public class MainController {
 
     public synchronized void log(String messaggio){
         System.out.print(messaggio);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                logTextArea.appendText(messaggio);
-            }
-        });
+        Platform.runLater(() -> logTextArea.appendText(messaggio));
     }
 
     public void setMainApp(MainApp mainApp) {

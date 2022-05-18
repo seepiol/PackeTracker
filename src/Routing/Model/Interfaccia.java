@@ -1,7 +1,5 @@
 package Routing.Model;
 
-import java.util.Objects;
-
 /**
  * Classe che descrive un'interfaccia del router
  */
@@ -10,7 +8,7 @@ public class Interfaccia {
     /**
      * nome dell'interfaccia
      */
-    private String label;
+    private final String label;
     /**
      * collegamento dell'interfaccia
      */
@@ -18,7 +16,7 @@ public class Interfaccia {
     /**
      * indirizzo univoco dell'interfaccia
      */
-    private String address;
+    private final String address;
     /**
      * router contenente l'interfaccia
      */
@@ -44,10 +42,6 @@ public class Interfaccia {
         return label;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public Collegamento getCollegamento() {
         return collegamento;
     }
@@ -58,10 +52,6 @@ public class Interfaccia {
 
     public String getAddress() {
         return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public Router getRouter() {

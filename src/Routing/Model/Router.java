@@ -20,31 +20,31 @@ public class Router implements Runnable{
     /**
      * Identificatore univoco router
      */
-    private int id;
+    private final int id;
     /**
      * Nome identificativo router
      */
-    private String label;
+    private final String label;
     /**
      * Lista delle interfacce del router
      */
-    private ArrayList<Interfaccia> interfacce;
+    private final ArrayList<Interfaccia> interfacce;
     /**
      * Tabella di routing
      */
-    private TabellaRouting tabellaRouting;
+    private final TabellaRouting tabellaRouting;
     /**
      * Pacchetti in ricezione
      */
-    private Queue<Pacchetto> codaPacchettiEntrata;
+    private final Queue<Pacchetto> codaPacchettiEntrata;
     /**
      * Gestore coda pacchetti in entrata
      */
-    private GestoreCodaPacchettiEntrata gestoreCoda;
+    private final GestoreCodaPacchettiEntrata gestoreCoda;
     /**
      * Cronologia pacchetti ricevuti
      */
-    private ArrayList<Pacchetto> pacchetti;
+    private final ArrayList<Pacchetto> pacchetti;
     /**
      * Canvas per disegnare il router nella GUI
      */
@@ -52,17 +52,13 @@ public class Router implements Runnable{
     /**
      * Istanza di maincontroller necessaria per inviare i log
      */
-    private MainController mainController;
+    private final MainController mainController;
     /**
      * Thread router
      */
     private Thread thread;
 
 
-    /**
-     * Crea l'istanza di un router
-     * @param label etichetta identificativa del router
-     */
     public Router(MainController mainController) {
         this.thread = new Thread(this);
         this.interfacce = new ArrayList<>();
@@ -81,10 +77,6 @@ public class Router implements Runnable{
 
     public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     public String getLabel() {
@@ -244,6 +236,7 @@ public class Router implements Runnable{
     public void start() {
         mainController.log(String.format("[%s]: Inizializzato\n", this));
         gestoreCoda.start();
+        this.thread = new Thread(this);
         thread.start();
     }
 

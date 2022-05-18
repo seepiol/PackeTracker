@@ -3,8 +3,8 @@ package Routing.Model;
 import java.util.ArrayList;
 
 public class MainModel {
-    private ArrayList<Router> listaRouter;
-    private ArrayList<Collegamento> listaCollegamenti;
+    private final ArrayList<Router> listaRouter;
+    private final ArrayList<Collegamento> listaCollegamenti;
 
     public MainModel() {
         listaRouter = new ArrayList<>();

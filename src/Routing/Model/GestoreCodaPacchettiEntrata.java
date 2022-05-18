@@ -15,11 +15,11 @@ public class GestoreCodaPacchettiEntrata implements Runnable{
     /**
      * coda dei pacchetti in entrata del router
      */
-    private Queue<Pacchetto> codaPacchettiEntrata;
+    private final Queue<Pacchetto> codaPacchettiEntrata;
     /**
      * Router
      */
-    private Router router;
+    private final Router router;
 
     public GestoreCodaPacchettiEntrata(Router router, Queue<Pacchetto> codaPacchettiEntrata) {
         this.router = router;
@@ -28,6 +28,7 @@ public class GestoreCodaPacchettiEntrata implements Runnable{
     }
 
     public void start(){
+        this.thread = new Thread(this);
         thread.start();
     }
 

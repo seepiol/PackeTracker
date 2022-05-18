@@ -13,7 +13,7 @@ public class TabellaRouting {
     /**
      * Lista delle rotte
      */
-    private ArrayList<Rotta> table;
+    private final ArrayList<Rotta> table;
     public Semaphore semaforo;
 
     public TabellaRouting() {
@@ -26,8 +26,7 @@ public class TabellaRouting {
     }
 
     public ArrayList<Rotta> getTabella(){
-        ArrayList<Rotta> tabella = table;
-        return tabella;
+        return table;
     }
 
     public void rimuoviRotta(Rotta rotta){

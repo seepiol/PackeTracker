@@ -1,17 +1,11 @@
 package Routing;
 
 import Routing.Controller.MainController;
-import Routing.Model.Collegamento;
-import Routing.Model.Interfaccia;
 import Routing.Model.MainModel;
-import Routing.Model.Router;
-import Routing.View.DragResizeMod;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -70,124 +64,8 @@ public class MainApp extends Application{
         }
     }
 
-
-    private void test(){
-        /*
-        // creazione router
-        Router r1 = new Router("r1", mainController);
-        Router r2 = new Router("r2", mainController);
-        Router r3 = new Router("r3", mainController);
-        Router r4 = new Router("r4", mainController);
-        Router r5 = new Router("r5", mainController);
-
-        // creazione interfacce
-        Interfaccia eth1r1 = new Interfaccia("eth1", "1");
-        Interfaccia eth2r1 = new Interfaccia("eth2", "6");
-        Interfaccia eth3r1 = new Interfaccia("eth3", "7");
-
-        Interfaccia eth1r2 = new Interfaccia("eth1", "2");
-        Interfaccia eth2r2 = new Interfaccia("eth2", "3");
-
-        Interfaccia eth1r3 = new Interfaccia("eth1", "4");
-
-        Interfaccia eth1r4 = new Interfaccia("eth1", "5");
-        Interfaccia eth2r4 = new Interfaccia("eth2", "9");
-
-        Interfaccia eth1r5 = new Interfaccia("eth1", "8");
-
-
-        // aggiunta interfacce a router
-        r1.aggiungiInterfaccia(eth1r1);
-        r1.aggiungiInterfaccia(eth2r1);
-        r1.aggiungiInterfaccia(eth3r1);
-
-        r2.aggiungiInterfaccia(eth1r2);
-        r2.aggiungiInterfaccia(eth2r2);
-
-        r3.aggiungiInterfaccia(eth1r3);
-
-        r4.aggiungiInterfaccia(eth1r4);
-        r4.aggiungiInterfaccia(eth2r4);
-
-        r5.aggiungiInterfaccia(eth1r5);
-
-        // creazione link
-        Collegamento link1 = new Collegamento(eth1r1, eth1r2, 2);
-        Collegamento link2 = new Collegamento(eth1r3, eth2r1, 1);
-        Collegamento link3 = new Collegamento(eth1r4, eth3r1, 1);
-        Collegamento link4 = new Collegamento(eth2r4, eth1r5, 1);
-
-        mainModel.addCollegamento(link1);
-        mainModel.addCollegamento(link2);
-        mainModel.addCollegamento(link3);
-        mainModel.addCollegamento(link4);
-
-        mainModel.addRouter(r1);
-        mainModel.addRouter(r2);
-        mainModel.addRouter(r3);
-        mainModel.addRouter(r4);
-        mainModel.addRouter(r5);
-
-        mainController.disegnaRouter();
-        mainController.disegnaCollegamenti();
-
-         */
-    }
-
-    /*
-    public boolean apriCaricoScarico(){
-        try {
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("/Magazzino/View/DialogoCaricoScarico.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Carico/Scarico");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-            dialogStage.setMinHeight(280);
-            dialogStage.setMinWidth(295);
-            dialogStage.setMaxHeight(280);
-            dialogStage.setMaxWidth(295);
-
-            CaricaScaricaController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setMainApp(this);
-            controller.setArticolo();
-
-            // Show the dialog and wait until the user closes it
-            dialogStage.showAndWait();
-            if(controller.isOkClicked()){
-                return true;
-            }
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-     */
-
-
     public MainModel getMainModel() {
         return mainModel;
-    }
-
-    public MainController getMainController() {
-        return mainController;
-    }
-
-    public Stage getPrimaryStage() {
-        return this.primaryStage;
-    }
-
-    public void chiudi(){
-        javafx.application.Platform.exit();
     }
 
 }

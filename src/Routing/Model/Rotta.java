@@ -7,15 +7,15 @@ public class Rotta {
     /**
      * Router di destinazione della rotta
      */
-    private Router router;
+    private final Router router;
     /**
      * Interfaccia sulla quale inviare il pacchetto
      */
-    private Interfaccia interfaccia;
+    private final Interfaccia interfaccia;
     /**
      * Costo totale del tragitto router corrente - router destinazione
      */
-    private int costo;
+    private final int costo;
 
     public Rotta(Router router, Interfaccia interfaccia, int costo) {
         this.router = router;
