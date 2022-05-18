@@ -98,6 +98,10 @@ public class MainController {
         }, new Date(), 1000);
     }
 
+
+    /**
+     * Aggiorna la tabella di routing quando viene selezionato un router dalla choicebox
+     */
     @FXML
     public void selezionatoRouterPerTabella(){
         Router routerSelezionato = tabellaRouterChoiceBox.getValue();
@@ -120,6 +124,9 @@ public class MainController {
         disegnaCollegamenti();
     }
 
+    /**
+     * Avvia la simulazione
+     */
     public void avviaSimulazione(){
         mainApp.setSimulazioneAttiva(true);
         interrompiSimulazioneButton.setDisable(false);
@@ -128,6 +135,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Impostazione router selezionato tramite choicebox in tab informazioni router
+     */
     public void impostaRouter(){
         Router routerSelezionato = impostazioniRouterChoiceBox.getValue();
         interfacceRouterTextArea.clear();
@@ -154,6 +164,9 @@ public class MainController {
         this.secondoRouter = secondoRouter;
     }
 
+    /**
+     * effettua il collegamento tra due router
+     */
     public void terminaCollegamento(){
         if(primoRouter != secondoRouter) {
             Interfaccia interfacciaPrimoRouter = primoRouter.aggiungiInterfaccia();
@@ -174,11 +187,19 @@ public class MainController {
 
     }
 
+    /**
+     * Avvia la procedura di creazione del collegamento tra due router
+     */
     public void collegaRouter(){
         staEseguendoCollegamento = true;
         collegaRouterButton.setDisable(true);
     }
 
+    /**
+     * Ottiene il router corrispondente al canvas
+     * @param canvas istanza del canvas del router
+     * @return istanza del router corrispondente al canvas
+     */
     public Router getRouterFromCanvas(Canvas canvas){
         for(Router router : mainModel.getListaRouter()){
             if(router.getCanvas() == canvas){
@@ -188,6 +209,9 @@ public class MainController {
         return null;
     }
 
+    /**
+     * Eseguie il reset della simulazione
+     */
     public void reset(){
         for(Router router : mainModel.getListaRouter()){
             router.reset();
@@ -196,8 +220,10 @@ public class MainController {
         interrompiSimulazioneButton.setDisable(true);
     }
 
+    /**
+     * Aggiunge un nuovo router alla rete
+     */
     public void aggiungiRouter(){
-        //TODO: se simulazione in corso, avvia subito thread
         Router router = new Router( this);
         mainModel.addRouter(router);
         disegnaRouter(router);
@@ -225,6 +251,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Disegna il canvas corrispondente ad un singolo router
+     * @param router router da disegnare
+     */
     public void disegnaRouter(Router router){
         Canvas canvas = new Canvas(100, 100);
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
@@ -243,6 +273,9 @@ public class MainController {
 
     }
 
+    /**
+     * Disegna i collegamenti presenti tra i router della rete
+     */
     public void disegnaCollegamenti(){
         eliminaCollegamenti();
         eliminaCollegamenti();
@@ -257,6 +290,9 @@ public class MainController {
         }
     }
 
+    /**
+     * disegna tutti i router presenti nella listaRouter di mainModel
+     */
     public void disegnaRouter(){
         // Disegna i router su canvas
         int spawnPosX = 0;
@@ -289,6 +325,9 @@ public class MainController {
         impostazioniRouterChoiceBox.getItems().addAll(mainModel.getListaRouter());
     }
 
+    /**
+     * Invia il pacchetto creato nella tab invio pacchetto
+     */
     @FXML
     public void inviaPacchetto(){
         if(mainApp.isSimulazioneAttiva()) {
@@ -310,6 +349,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Stampa su stdout e sulla tab di log dei messaggi
+     * @param messaggio messaggio da aggiungere al log
+     */
     public synchronized void log(String messaggio){
         System.out.print(messaggio);
         Platform.runLater(() -> logTextArea.appendText(messaggio));

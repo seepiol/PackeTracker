@@ -106,6 +106,10 @@ public class Router implements Runnable{
         return false;
     }
 
+    /**
+     * Aggiunge al router un interfaccia, creata automaticamente
+     * @return interfaccia creata
+     */
     public Interfaccia aggiungiInterfaccia(){
         int numeroInterfaccia;
         if(interfacce.size()>0)
@@ -280,6 +284,9 @@ public class Router implements Runnable{
         }
     }
 
+    /**
+     * Esegue il reset del router
+     */
     public void reset(){
         tabellaRouting.clear();
         codaPacchettiEntrata.clear();
