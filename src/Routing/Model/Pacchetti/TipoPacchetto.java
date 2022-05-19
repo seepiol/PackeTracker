@@ -5,5 +5,4 @@ package Routing.Model.Pacchetti;
  */
 public enum TipoPacchetto {
     TESTO,
-    PING,
 }

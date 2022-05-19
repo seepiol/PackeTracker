@@ -3,9 +3,9 @@
 
 ## Componenti del Gruppo
 - Moioli Jacopo
-- Moioli Jacopo
-- Moioli Jacopo
-- Moioli Jacopo
+- Baltag Ciprian
+- Invernizzi Daniel
+- Mazzei Gabriele
 
 ## Funzionamento
 Il programma simula una rete composta da `Router`.
