@@ -335,12 +335,17 @@ public class MainController {
             Router destinazione = routerDestinazioneChoiceBox.getValue();
             TipoPacchetto tipoPacchetto = tipoPacchettoChoiceBox.getValue();
             String contenuto = contenutoPacchettoTextArea.getText();
-            Pacchetto pacchetto = new Pacchetto(contenuto, sorgente, destinazione, tipoPacchetto);
-            if(sorgente.getTabellaRouting().esisteRottaPerRouter(destinazione)) {
-                sorgente.inviaPacchetto(pacchetto);
-                listHopPacchetto.setItems(pacchetto.getRottaObservableList());
+            if(sorgente!=null && destinazione!=null && tipoPacchetto!=null) {
+                Pacchetto pacchetto = new Pacchetto(contenuto, sorgente, destinazione, tipoPacchetto);
+                if (sorgente.getTabellaRouting().esisteRottaPerRouter(destinazione)) {
+                    sorgente.inviaPacchetto(pacchetto);
+                    listHopPacchetto.setItems(pacchetto.getRottaObservableList());
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "Rotta non esistente. Attendi la convergenza.");
+                    alert.showAndWait();
+                }
             }else{
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Rotta non esistente. Attendi la convergenza.");
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Valori non validi");
                 alert.showAndWait();
             }
         }else{

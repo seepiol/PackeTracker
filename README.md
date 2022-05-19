@@ -3,9 +3,9 @@
 
 ## Componenti del Gruppo
 - Moioli Jacopo
-- Mazzei Gabriele
-- Invernizzi Daniel
-- Baltag Ciprian
+- Moioli Jacopo
+- Moioli Jacopo
+- Moioli Jacopo
 
 ## Funzionamento
 Il programma simula una rete composta da `Router`.
@@ -17,16 +17,21 @@ La tabella di routing viene popolata attraverso un algoritmo simile a Bellman-Fo
 ## Interfaccia Utente
 ### Topologia Rete
 ![](topologiaRete.png)
+
 Permette la visualizzazione della rete, l'aggiunta dei router, la creazione dei collegamenti e l'avvio della simulazione
 ### Informazioni Router
 ![](informazioniRouter.png)
+
 Permette di visualizzare le interfacce di ciascun router
 ### Tabelle Routing
 ![](tabellaRouting.png)
+
 Permette di visualizzare la tabella di routing, aggiornata in tempo reale, di ogni router della rete
 ### Invio Pacchetto
 ![](invioPacchetto.png)
+
 Permette di inviare un pacchetto da un router all'altro, e vedere la lista dei router da cui il pacchetto è transitato
 ### Log
 ![](log.png)
+
 Permette di visualizzare il log
