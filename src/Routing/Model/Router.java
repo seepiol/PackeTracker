@@ -2,6 +2,7 @@ package Routing.Model;
 
 import Routing.Controller.MainController;
 import Routing.Model.Pacchetti.Pacchetto;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 
 import java.util.ArrayList;
@@ -223,6 +224,19 @@ public class Router implements Runnable{
             nextHop = tabellaRouting.getInterfacciaPerRouter(pacchetto.getDestinazione());
             if (nextHop != null) {
                 if(pacchetto.inoltra()) {
+                    /*
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainController.disegnaPosizionePacchetto(nextHop.getRouter(), nextHop.getCollegamento().getAltroNodo(nextHop).getRouter());
+                        }
+                    });
+                    try {
+                        Thread.sleep(1100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    */
                     mainController.log(String.format("[%s]: Pacchetto Inoltrato su %s\n", this, nextHop));
                     nextHop.getCollegamento().getAltroNodo(nextHop).getRouter().riceviPacchetto(pacchetto);
                 }else{

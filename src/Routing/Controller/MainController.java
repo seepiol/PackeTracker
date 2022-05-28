@@ -5,6 +5,7 @@ import Routing.Model.*;
 import Routing.Model.Pacchetti.Pacchetto;
 import Routing.Model.Pacchetti.TipoPacchetto;
 import Routing.View.DragResizeMod;
+import javafx.animation.PathTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -13,11 +14,15 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -64,12 +69,14 @@ public class MainController {
     @FXML
     private Button interrompiSimulazioneButton;
 
+
     public MainController(){
         DragResizeMod.setMainController(this);
     }
 
     @FXML
     private void initialize(){
+
 
         interrompiSimulazioneButton.setDisable(true);
 
@@ -288,6 +295,38 @@ public class MainController {
                 group.getChildren().add(line);
             }
         }
+    }
+
+    @FXML
+    public synchronized void disegnaPosizionePacchetto(Router sorgente, Router destinazione) {
+
+        Rectangle pacchetto = new Rectangle(40, 40);
+        pacchetto.setFill(Color.DARKBLUE);
+        group.getChildren().add(pacchetto);
+
+        PathTransition pathTransition = new PathTransition();
+
+
+        Line path = new Line();
+        path.setStartX(sorgente.getCanvas().getLayoutX());
+        System.out.println(path.getStartX());
+        path.setStartY(sorgente.getCanvas().getLayoutY());
+        System.out.println(path.getStartY());
+        path.setEndX(destinazione.getCanvas().getLayoutX());
+        System.out.println(path.getEndX());
+        path.setEndY(destinazione.getCanvas().getLayoutY());
+        System.out.println(path.getEndY());
+        pathTransition.setDuration(Duration.seconds(1));
+        pathTransition.setNode(pacchetto);
+        pathTransition.setPath(path);
+        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setCycleCount(1);
+        pathTransition.setAutoReverse(false);
+        pathTransition.play();
+
+        pathTransition.setOnFinished((actionEvent -> {
+            group.getChildren().remove(pacchetto);
+        }));
     }
 
     /**
